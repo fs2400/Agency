@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agency</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@500;700&family=Quicksand:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"></script>
+
+
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Force arrow cursor sitewide */
+    html, body, h1, h2, h3, h4, h5, h6, p, span, div, section, li, td, th, tr,
+    em, strong, small, blockquote, figcaption, header, footer, main, article, aside {
+      cursor: default !important;
+    }
+
+    a, button, [role="button"], input, select, textarea, label,
+    .btn, .nav-cta, .nav-logo, .cs-dot-nav, .waypoint-dot, video {
+      cursor: pointer !important;
+    }
+
+    spline-viewer, spline-viewer * {
+      cursor: default !important;
+    }
+
+    :root {
+      --charcoal-blue: #454851;
+      --sage-green: #73956F;
+      --muted-teal: #7BAE7F;
+      --celadon: #95D7AE;
+      --lavender-blush: #FCEFF9;
+      --white: #fafafa;
+      --dark-gray: #1a1a1e;
+      --medium-gray: #64748b;
+      --light-gray: #e2e8f0;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-editorial: 'Playfair Display', Georgia, serif;
+      --paper-tone: #f8f2e4;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--dark-gray);
+      background: var(--charcoal-blue);
+      line-height: 1.7;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2' /%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' /%3E%3C/svg%3E");
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 clamp(24px, 5vw, 80px);
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Scroll Progress Bar */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: var(--celadon);
+      width: 0%;
+      z-index: 1000;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 99;
+      padding: 20px 0;
+      background: transparent;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(252, 239, 249, 0.95);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(115, 149, 111, 0.1);
+    }
+
+    nav .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      text-decoration: none;
+      position: relative;
+      z-index: 3;
+      transition: color 0.4s ease;
+    }
+
+    nav.scrolled .nav-logo {
+      color: var(--charcoal-blue);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      align-items: center;
+      list-style: none;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    nav.scrolled .nav-links {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.6);
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--sage-green);
+    }
+
+    .nav-cta {
+      background: var(--sage-green);
+      color: var(--white) !important;
+      padding: 10px 24px;
+      border-radius: 100px;
+      font-size: 0.85rem !important;
+      transition: all 0.3s ease !important;
+      border: none;
+      cursor: pointer;
+    }
+
+    .nav-cta:hover {
+      background: var(--muted-teal);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(115, 149, 111, 0.25);
+    }
+
+    /* Section Waypoint Dots */
+    .waypoint-dots {
+      position: fixed;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .waypoint-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(115, 149, 111, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .waypoint-dot.active {
+      background: var(--sage-green);
+      width: 12px;
+      height: 12px;
+      border-color: var(--muted-teal);
+    }
+
+    .waypoint-dot:hover {
+      background: var(--muted-teal);
+    }
+
+    @media (max-width: 768px) {
+      .waypoint-dots {
+        display: none;
+      }
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding-top: 80px;
+      padding-bottom: 0;
+      background: var(--charcoal-blue);
+    }
+
+    /* Hero Logo Ticker */
+    .hero-logo-ticker {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      overflow: hidden;
+      padding: 18px 0;
+      background: rgba(252, 239, 249, 0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-top: 1px solid rgba(115, 149, 111, 0.08);
+      z-index: 2;
+    }
+
+    .hero-logo-ticker-label {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 300px;
+      background: linear-gradient(90deg, rgba(252, 239, 249, 1) 70%, transparent);
+      display: flex;
+      align-items: center;
+      padding-left: clamp(24px, 5vw, 80px);
+      z-index: 2;
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--medium-gray);
+      white-space: nowrap;
+    }
+
+    .hero-logo-ticker-fade-right {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 80px;
+      background: linear-gradient(270deg, rgba(252, 239, 249, 0.95) 20%, transparent);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .hero-logo-ticker .logo-ticker-track {
+      padding-left: 310px;
+    }
+
+    .hero-logo-ticker .logo-ticker-track img {
+      filter: grayscale(100%);
+      opacity: 0.45;
+      transition: filter 0.3s ease, opacity 0.3s ease;
+    }
+
+    .hero-logo-ticker .logo-ticker-track img:hover {
+      filter: grayscale(0%);
+      opacity: 1;
+    }
+
+    .hero-spline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .hero-spline spline-viewer {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .hero-spline::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at center, rgba(69, 72, 81, 0.2) 0%, rgba(69, 72, 81, 0.55) 60%, rgba(69, 72, 81, 0.8) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero-spline-fallback {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(115, 149, 111, 0.2) 0%, transparent 60%),
+                  radial-gradient(ellipse at 70% 70%, rgba(123, 174, 127, 0.12) 0%, transparent 50%),
+                  var(--charcoal-blue);
+      z-index: 0;
+      transition: opacity 1.5s ease;
+    }
+
+    .hero-content {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      align-items: center;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-statement-box {
+      background: rgba(20, 22, 28, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 48px 56px 40px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 2.6vw, 2.5rem);
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      margin-bottom: 20px;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 1024px) {
+      .hero h1 {
+        white-space: normal;
+      }
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--celadon);
+    }
+
+    .hero-followup {
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: var(--white);
+      max-width: 700px;
+      margin: 8px auto 0;
+    }
+
+    .hero-tagline {
+      font-family: var(--font-display);
+      font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--celadon);
+      margin: 0 auto 12px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero-tagline::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--celadon), transparent);
+      border-radius: 1px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 36px;
+      border-radius: 100px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      font-family: var(--font-body);
+    }
+
+    .btn-primary {
+      background: var(--celadon);
+      color: var(--charcoal-blue);
+    }
+
+    .btn-primary:hover {
+      background: var(--muted-teal);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(149, 215, 174, 0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--celadon);
+      border: 2px solid var(--celadon);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(149, 215, 174, 0.1);
+      border-color: var(--muted-teal);
+      color: var(--muted-teal);
+    }
+
+    .btn-secondary-light {
+      background: transparent;
+      color: var(--sage-green);
+      border: 2px solid var(--sage-green);
+    }
+
+    .btn-secondary-light:hover {
+      background: rgba(115, 149, 111, 0.1);
+      border-color: var(--muted-teal);
+      color: var(--muted-teal);
+    }
+
+    /* Logo Ticker */
+    .logo-ticker-track {
+      display: flex;
+      align-items: center;
+      gap: 60px;
+      width: max-content;
+      animation: scroll-continuous 35s linear infinite;
+      padding-left: 200px;
+    }
+
+    @keyframes scroll-continuous {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .logo-ticker-track img {
+      height: 40px;
+      width: 120px;
+      object-fit: contain;
+      filter: grayscale(100%);
+      opacity: 0.5;
+      transition: opacity 0.3s ease, filter 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .logo-ticker-track img:hover {
+      filter: grayscale(0%);
+      opacity: 0.85;
+    }
+
+    .logo-ticker-track img.logo-wordmark { height: 54px; }
+    .logo-ticker-track img.logo-wordmark-sm { height: 72px; }
+
+    .logo-ticker-track img.logo-invert {
+      filter: grayscale(100%) invert(1);
+      opacity: 0.4;
+    }
+    .logo-ticker-track img.logo-invert:hover {
+      filter: invert(1);
+      opacity: 0.7;
+    }
+
+    /* Section Label */
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sage-green);
+      margin-bottom: 20px;
+    }
+
+    /* Light Sections */
+    .light-section {
+      background: var(--lavender-blush);
+      color: var(--dark-gray);
+      padding: 80px 0;
+    }
+
+    .light-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--dark-gray);
+      line-height: 1.15;
+      margin-bottom: 28px;
+    }
+
+    .light-section em {
+      color: var(--sage-green);
+      font-style: normal;
+    }
+
+    .light-section p {
+      color: var(--medium-gray);
+    }
+
+    /* Dark Sections */
+    .dark-section {
+      background: var(--charcoal-blue);
+      color: var(--white);
+      padding: 80px 0;
+      position: relative;
+    }
+
+    .dark-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 28px;
+    }
+
+    .dark-section em {
+      color: var(--celadon);
+      font-style: normal;
+    }
+
+    .dark-section p {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       Point of View Section
+       ═══════════════════════════════════════════════════════════════════ */
+    .pov-section {
+      background: var(--lavender-blush);
+      padding: 120px 0;
+    }
+
+    .pov-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sage-green);
+      margin-bottom: 48px;
+      text-align: center;
+    }
+
+    .pov-block {
+      max-width: 800px;
+      margin: 0 auto 56px;
+    }
+
+    .pov-block:last-of-type {
+      margin-bottom: 48px;
+    }
+
+    .pov-block h3 {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      color: var(--charcoal-blue);
+      margin-bottom: 16px;
+    }
+
+    .pov-block p {
+      font-size: 1.1rem;
+      line-height: 1.75;
+      color: var(--medium-gray);
+      max-width: 720px;
+    }
+
+    .pov-cta-wrap {
+      text-align: center;
+      margin-top: 48px;
+    }
+
+    .pov-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 18px 36px;
+      background: var(--sage-green);
+      color: var(--white);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -0.01em;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: 0 2px 8px rgba(115, 149, 111, 0.25);
+    }
+
+    .pov-cta:hover {
+      background: var(--muted-teal);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(115, 149, 111, 0.35);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       Our Services Section (What Section)
+       ═══════════════════════════════════════════════════════════════════ */
+    .what-section {
+      background: var(--charcoal-blue);
+      padding: 100px 0;
+      text-align: center;
+    }
+
+    .what-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .what-section h2 em {
+      color: var(--celadon);
+      font-style: normal;
+    }
+
+    .what-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .what-description {
+      font-size: 1.1rem;
+      line-height: 1.75;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 24px;
+      max-width: 750px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       Timeline Section — "How We Work With You"
+       ═══════════════════════════════════════════════════════════════════ */
+    .timeline-section {
+      background: var(--lavender-blush);
+      padding: 120px 0;
+      position: relative;
+    }
+
+    .timeline-section .section-header {
+      max-width: 800px;
+      margin: 0 auto 64px;
+      padding: 0 clamp(24px, 5vw, 80px);
+      text-align: center;
+    }
+
+    .timeline-section .section-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+      font-weight: 700;
+      color: var(--charcoal-blue);
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    /* Timeline container — centered */
+    .timeline-container {
+      position: relative;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 clamp(24px, 5vw, 80px);
+    }
+
+    /* Vertical track — runs through the center of the icon column */
+    .timeline-track {
+      position: absolute;
+      left: calc(clamp(24px, 5vw, 80px) + 40px);
+      top: 32px;
+      bottom: 32px;
+      width: 2px;
+      background: rgba(115, 149, 111, 0.15);
+    }
+
+    /* Fill overlay — grows via scaleY on scroll */
+    .timeline-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--sage-green);
+      transform: scaleY(0);
+      transform-origin: top center;
+      will-change: transform;
+    }
+
+    .phase-block {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 0;
+      position: relative;
+      padding-bottom: 24px;
+      opacity: 0.35;
+      transform: translateY(12px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .phase-block:last-child {
+      padding-bottom: 0;
+    }
+
+    .phase-block.activated {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Icon marker — left column, sits on top of the line */
+    .phase-circle {
+      grid-column: 1;
+      grid-row: 1;
+      width: 40px;
+      height: 40px;
+      justify-self: center;
+      align-self: start;
+      margin-top: 12px;
+      border: 2px solid var(--sage-green);
+      border-radius: 50%;
+      background: var(--lavender-blush);
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 0 4px var(--lavender-blush);
+    }
+
+    .phase-circle svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--sage-green);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: stroke 0.4s ease;
+    }
+
+    .phase-block.activated .phase-circle {
+      width: 46px;
+      height: 46px;
+      background: var(--sage-green);
+      border-color: var(--sage-green);
+      box-shadow: 0 0 0 5px var(--lavender-blush), 0 0 20px rgba(115, 149, 111, 0.25);
+    }
+
+    .phase-block.activated .phase-circle svg {
+      stroke: var(--white);
+    }
+
+    .phase-dot {
+      fill: var(--sage-green);
+      stroke: var(--sage-green);
+    }
+
+    .phase-block.activated .phase-dot {
+      fill: var(--white);
+      stroke: var(--white);
+    }
+
+    .phase-content {
+      grid-column: 2;
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(115, 149, 111, 0.1);
+      border-radius: 16px;
+      padding: 28px 36px;
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .phase-block.activated .phase-content {
+      background: rgba(255, 255, 255, 0.8);
+      border-color: rgba(115, 149, 111, 0.2);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    }
+
+    .phase-label {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--sage-green);
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .phase-headline {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2vw, 1.5rem);
+      font-weight: 600;
+      color: var(--charcoal-blue);
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+      margin-bottom: 14px;
+    }
+
+    .phase-body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 400;
+      color: rgba(69, 72, 81, 0.85);
+      line-height: 1.8;
+      margin-bottom: 0;
+      max-width: 640px;
+    }
+
+    /* Mobile timeline */
+    @media (max-width: 768px) {
+      .timeline-section {
+        padding: 80px 0;
+      }
+
+      .timeline-section .section-header {
+        margin-bottom: 48px;
+      }
+
+      .timeline-track {
+        display: none;
+      }
+
+      .phase-block {
+        display: block;
+        position: relative;
+        padding-bottom: 24px;
+        opacity: 1;
+        transform: none;
+      }
+
+      .phase-content {
+        grid-column: unset;
+        padding: 24px;
+      }
+
+      .phase-headline {
+        font-size: 1.25rem;
+      }
+
+      .phase-circle {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .timeline-fill {
+        display: none;
+      }
+
+      .phase-block {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       Key Outcomes Section
+       ═══════════════════════════════════════════════════════════════════ */
+    .outcomes {
+      background: var(--charcoal-blue);
+      padding: 100px 0;
+    }
+
+    .outcomes-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .outcomes-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .outcomes-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .outcomes-column {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(149, 215, 174, 0.15);
+      border-radius: 20px;
+      padding: 48px 40px;
+    }
+
+    .outcomes-column h3 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--celadon);
+      margin-bottom: 28px;
+      letter-spacing: -0.02em;
+    }
+
+    .outcomes-column ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .outcomes-column li {
+      position: relative;
+      padding-left: 20px;
+      font-size: 1rem;
+      line-height: 1.75;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 20px;
+    }
+
+    .outcomes-column li:last-child {
+      margin-bottom: 0;
+    }
+
+    .outcomes-column li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--celadon);
+    }
+
+    @media (max-width: 768px) {
+      .outcomes-columns {
+        grid-template-columns: 1fr;
+      }
+
+      .outcomes-column {
+        padding: 36px 28px;
+      }
+    }
+
+    /* CTA Section */
+    .cta {
+      background: var(--charcoal-blue);
+      padding: 120px 0;
+      text-align: center;
+    }
+
+    .cta h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      margin-bottom: 24px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta a {
+      display: inline-block;
+    }
+
+    .cta-footer {
+      margin-top: 80px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.8rem;
+    }
+
+    .cta-footer a {
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .cta-footer a:hover {
+      color: var(--celadon);
+    }
+
+    /* Reveal Animation */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-statement-box {
+        padding: 32px 24px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="container">
+      <a href="#hero" class="nav-logo">Agency</a>
+      <ul class="nav-links">
+        <li><a href="#pov">Point of View</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#how-it-works">How We Work</a></li>
+        <li><a href="#contact" class="nav-cta">Start a Conversation</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Waypoint Dots -->
+  <div class="waypoint-dots">
+    <div class="waypoint-dot active" data-section="hero"></div>
+    <div class="waypoint-dot" data-section="pov"></div>
+    <div class="waypoint-dot" data-section="services"></div>
+    <div class="waypoint-dot" data-section="how-it-works"></div>
+    <div class="waypoint-dot" data-section="outcomes"></div>
+    <div class="waypoint-dot" data-section="contact"></div>
+  </div>
+
+  <!-- HERO SECTION -->
+  <section class="hero" id="hero">
+    <div class="hero-spline">
+      <div class="hero-spline-fallback"></div>
+      <spline-viewer url="https://prod.spline.design/CL3GuOJE86k-IgGj/scene.splinecode" loading-anim-type="none" events-target="none"></spline-viewer>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-statement-box">
+          <h1>AI is not just changing how fast we can work.<br><em>It&rsquo;s changing what &lsquo;work&rsquo; is.</em></h1>
+          <p class="hero-followup">Most organizations are using AI to do what they already do, faster. While they focus on being more efficient, they&rsquo;re missing the opportunity to become genuinely more adaptive.</p>
+        </div>
+        <p class="hero-tagline">Agency builds organizations that adapt.</p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn btn-primary">Schedule a Time With Us &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logo ticker at bottom of hero -->
+    <div class="hero-logo-ticker">
+      <span class="hero-logo-ticker-label">Founders with experience at</span>
+      <div class="hero-logo-ticker-fade-right"></div>
+      <div class="logo-ticker-track">
+        <img src="Logos/AbbVie_logo.svg.png" alt="AbbVie">
+        <img src="Logos/Chase-Logo.png" alt="Chase" class="logo-wordmark">
+        <img src="Logos/Fedex.png" alt="FedEx" class="logo-wordmark-sm">
+        <img src="Logos/GSK_logo_2014.svg.png" alt="GSK">
+        <img src="Logos/Inova_Health_System_logo.png" alt="Inova Health System">
+        <img src="Logos/Kaiser-Permanente-Logo.png" alt="Kaiser Permanente" class="logo-wordmark">
+        <img src="Logos/Nike-Logo-1978.png" alt="Nike">
+        <img src="Logos/Pfizer.png" alt="Pfizer">
+        <img src="Logos/Vanguard.png" alt="Vanguard" class="logo-wordmark">
+        <img src="Logos/Washington-Post-Symbol.png" alt="The Washington Post">
+        <img src="Logos/McKesson.svg" alt="McKesson">
+        <img src="Logos/AbbVie_logo.svg.png" alt="AbbVie">
+        <img src="Logos/Chase-Logo.png" alt="Chase" class="logo-wordmark">
+        <img src="Logos/Fedex.png" alt="FedEx" class="logo-wordmark-sm">
+        <img src="Logos/GSK_logo_2014.svg.png" alt="GSK">
+        <img src="Logos/Inova_Health_System_logo.png" alt="Inova Health System">
+        <img src="Logos/Kaiser-Permanente-Logo.png" alt="Kaiser Permanente" class="logo-wordmark">
+        <img src="Logos/Nike-Logo-1978.png" alt="Nike">
+        <img src="Logos/Pfizer.png" alt="Pfizer">
+        <img src="Logos/Vanguard.png" alt="Vanguard" class="logo-wordmark">
+        <img src="Logos/Washington-Post-Symbol.png" alt="The Washington Post">
+        <img src="Logos/McKesson.svg" alt="McKesson">
+      </div>
+    </div>
+  </section>
+
+  <!-- POINT OF VIEW SECTION -->
+  <section class="pov-section light-section" id="pov">
+    <div class="container">
+      <div class="pov-eyebrow">Our Point of View</div>
+
+      <div class="pov-block reveal">
+        <h3>The real challenge with AI isn't technological&mdash;it's organizational.</h3>
+        <p>AI can already do the analytical thinking today's organizations run on &mdash; only faster and cheaper. Which raises the real question: what is the role of your people once that thinking is automated? In that question lies the opportunity.</p>
+      </div>
+
+      <div class="pov-block reveal">
+        <h3>The opportunity: unleash your people to explore the future, while AI runs the present.</h3>
+        <p>Once every organization can operate with AI, operational efficiency stops being a differentiator. The only thing that separates businesses will be their ability to adapt &mdash; to question what's next, and move toward it.</p>
+      </div>
+
+      <div class="pov-block reveal">
+        <h3>AI makes adaptability table stakes&mdash;and human agency is what delivers it.</h3>
+        <p>The organizations that win won't be the ones that deploy AI the fastest. They'll be the ones that break what constrains human agency, and build what expands it.</p>
+      </div>
+
+      <div class="pov-cta-wrap reveal">
+        <a href="pov.html" class="pov-cta">Our Full Point of View &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUR SERVICES SECTION -->
+  <section class="what-section dark-section" id="services">
+    <div class="container">
+      <div class="reveal">
+        <div class="what-inner">
+          <h2>We help organizations make <em>human agency</em> their greatest AI advantage.</h2>
+          <p class="what-description">Most AI transformations aren't transformations at all. They replace existing workflows with AI technology &mdash; and ignore the people required to execute them. What results is a faster version of the same organization without changing what the organization is capable of.</p>
+          <p class="what-description">We don't run transformation programs. We embed directly with your team on the strategic initiatives that matter most &mdash; developing new directions for the business while building your team's capacity to own them. We're not delivering a report or a roadmap. We're building the future of your organization inside the work that matters today.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW WE WORK WITH YOU — Scroll-activated vertical timeline -->
+  <section id="how-it-works" class="timeline-section light-section">
+    <div class="container">
+      <!-- Section header -->
+      <div class="section-header reveal">
+        <h2>How We Work With You</h2>
+      </div>
+
+      <!-- Timeline container -->
+      <div class="timeline-container">
+        <!-- Vertical line -->
+        <div class="timeline-track" aria-hidden="true">
+          <div class="timeline-fill"></div>
+        </div>
+
+        <!-- STEP 01 -->
+        <div class="phase-block" data-phase="1">
+          <div class="phase-circle" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="7" r="2.5"/><path d="M2 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/><path d="M17 10a4 4 0 0 1 4 4v2"/></svg>
+          </div>
+
+          <div class="phase-content">
+            <span class="phase-label">01</span>
+            <h3 class="phase-headline" id="headline-01">Immediately start working with your people.</h3>
+            <p class="phase-body">We start by learning how your organization works &mdash; not through surveys or intake forms, but by getting directly into the work alongside your people. Your people begin experiencing a different way of working from day one. We begin understanding what the organization needs to work differently.</p>
+          </div>
+        </div>
+
+        <!-- STEP 02 -->
+        <div class="phase-block" data-phase="2">
+          <div class="phase-circle" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v4"/><path d="M12 17v4"/><path d="M3 12h4"/><path d="M17 12h4"/><circle class="phase-dot" cx="12" cy="12" r="2"/></svg>
+          </div>
+
+          <div class="phase-content">
+            <span class="phase-label">02</span>
+            <h3 class="phase-headline" id="headline-02">Pick the right strategic initiative.</h3>
+            <p class="phase-body">We work with senior leadership to identify a transformation challenge that is mission critical, has executive sponsorship, and has the potential to show the rest of the organization what a different way of working can produce. We then assemble your cross-functional team that will own its execution &mdash; the people with the domain expertise, judgment, and stake in the outcome to make it matter.</p>
+          </div>
+        </div>
+
+        <!-- STEP 03 -->
+        <div class="phase-block" data-phase="3">
+          <div class="phase-circle" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M13 2 L4 14h7l-1 8 9-12h-7z"/></svg>
+          </div>
+
+          <div class="phase-content">
+            <span class="phase-label">03</span>
+            <h3 class="phase-headline" id="headline-03">Change how the work gets done.</h3>
+            <p class="phase-body">We don't sit above the work &mdash; we get into it alongside your team. We bring the methods, mindsets, and AI tools needed to build the critical thinking skills this moment demands, and we apply them directly to the initiative rather than in a classroom. By the time the work is done, your team doesn't just have a new strategic direction &mdash; they built it. That ownership is what creates the belief and understanding to drive what comes next.</p>
+          </div>
+        </div>
+
+        <!-- STEP 04 -->
+        <div class="phase-block" data-phase="4">
+          <div class="phase-circle" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 21V4l9 5.5L4 15"/><path d="M4 15h16"/></svg>
+          </div>
+
+          <div class="phase-content">
+            <span class="phase-label">04</span>
+            <h3 class="phase-headline" id="headline-04">Deliver the outcome.</h3>
+            <p class="phase-body">The initiative gets done &mdash; with more insight, more confidence, and more organizational backing than a conventional approach would have produced. But the result is only part of what the work generates. Along the way, the team develops a new set of capabilities and a lived understanding of what becomes possible when you stop optimizing the old model and start building toward the next one.</p>
+          </div>
+        </div>
+
+        <!-- STEP 05 -->
+        <div class="phase-block" data-phase="5">
+          <div class="phase-circle" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 20V4"/><path d="M5 11l7-7 7 7"/><path d="M5 18h14"/><path d="M7 22h10"/></svg>
+          </div>
+
+          <div class="phase-content">
+            <span class="phase-label">05</span>
+            <h3 class="phase-headline" id="headline-05">Compound what we learn.</h3>
+            <p class="phase-body">We sit down with leadership to synthesize what the work revealed: which teams should work this way next, where it exposed opportunities to rethink how the organization operates, and what strategic hypotheses are worth pursuing going forward. Each engagement builds on the one before it. And over time, that is how the organization moves from asking what AI can do for them to discovering what they can become because of it &mdash; through your people.</p>
+          </div>
+        </div>
+
+      </div><!-- /.timeline-container -->
+    </div>
+  </section>
+
+  <!-- KEY OUTCOMES SECTION -->
+  <section class="outcomes dark-section" id="outcomes">
+    <div class="container">
+      <div class="outcomes-header reveal">
+        <h2>Key Outcomes from Our Partnership</h2>
+      </div>
+
+      <div class="outcomes-columns reveal">
+        <div class="outcomes-column">
+          <h3>For Your Teams</h3>
+          <ul>
+            <li>A clear and personal understanding of the value they bring in an AI-native organization &mdash; and the critical thinking skills, methods, and mindsets to deliver it</li>
+            <li>Fluency with AI tools that makes them genuinely more capable, not just faster &mdash; and the ability to get more out of AI by bringing better questions to it</li>
+            <li>Deep ownership of a real transformation initiative &mdash; the understanding of why it matters, the belief in where it's going, and the motivation to drive it forward</li>
+          </ul>
+        </div>
+        <div class="outcomes-column">
+          <h3>For Your Leadership &amp; Organization</h3>
+          <ul>
+            <li>A high-value transformation initiative delivered with more speed, insight, and organizational backing than a conventional approach would produce &mdash; and a team equipped to own its execution</li>
+            <li>A clear view of what is constraining your organization from adapting: where structures, incentives, and ways of working are getting in the way of the questions that will move the business forward</li>
+            <li>Not a deliverable to implement, but a transformation actively underway &mdash; with the strategy, the capability, and the belief to keep going</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA SECTION -->
+  <section class="cta dark-section" id="contact">
+    <div class="container">
+      <div class="reveal" style="text-align: center;">
+        <h2>Ready to build an organization that adapts?</h2>
+        <a href="mailto:drew@castellawconsulting.com" class="btn btn-primary" style="margin-top: 24px;">Start a Conversation &rarr;</a>
+      </div>
+      <div class="cta-footer">
+        <p>&copy; 2026 Agency</p>
+        <a href="#hero">Back to Top</a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Scroll Progress Bar
+    window.addEventListener('scroll', () => {
+      const scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      document.querySelector('.scroll-progress').style.width = scrollPercentage + '%';
+    });
+
+    // Navigation scroll effect
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    // Waypoint dots
+    const sections = document.querySelectorAll('section[id]');
+    const dots = document.querySelectorAll('.waypoint-dot');
+
+    const updateActiveDot = () => {
+      let currentSection = 0;
+      sections.forEach((section, index) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= window.innerHeight / 2) {
+          currentSection = index;
+        }
+      });
+
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSection);
+      });
+    };
+
+    window.addEventListener('scroll', updateActiveDot);
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        sections[index].scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // Reveal animations
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          entry.target.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        }
+      });
+    }, {
+      threshold: 0.15,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    document.querySelectorAll('.reveal').forEach(el => {
+      revealObserver.observe(el);
+    });
+
+    // Timeline scroll animation — fill line + activate phases
+    (function() {
+      const fill = document.querySelector('.timeline-fill');
+      const phases = document.querySelectorAll('.phase-block');
+      if (phases.length === 0) return;
+
+      // Skip on mobile
+      if (window.matchMedia('(max-width: 768px)').matches) return;
+
+      // Fill line on scroll & activate circles when the line reaches them
+      const track = document.querySelector('.timeline-track');
+      if (fill && track && typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.create({
+          trigger: '.timeline-container',
+          start: 'top 60%',
+          end: 'bottom 60%',
+          onUpdate: (self) => {
+            fill.style.transform = 'scaleY(' + self.progress + ')';
+
+            // Current bottom edge of the fill line in page coordinates
+            const trackRect = track.getBoundingClientRect();
+            const fillBottom = trackRect.top + trackRect.height * self.progress;
+
+            phases.forEach(phase => {
+              const circle = phase.querySelector('.phase-circle');
+              if (!circle) return;
+              const circleCenter = circle.getBoundingClientRect().top + circle.getBoundingClientRect().height / 2;
+              if (fillBottom >= circleCenter) {
+                phase.classList.add('activated');
+              } else {
+                phase.classList.remove('activated');
+              }
+            });
+          }
+        });
+      }
+    })();
+  </script>
+
+</body>
+</html>

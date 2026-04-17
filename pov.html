@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Don't automate the past. Question it. | Agency</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@500;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
+    rel="stylesheet">
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --charcoal-blue: #454851;
+      --sage-green: #73956F;
+      --muted-teal: #7BAE7F;
+      --celadon: #95D7AE;
+      --lavender-blush: #FCEFF9;
+      --white: #fafafa;
+      --dark-gray: #1a1a1e;
+      --medium-gray: #64748b;
+      --light-gray: #e2e8f0;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-editorial: 'Playfair Display', Georgia, serif;
+      --paper: #f9f7f3;
+      --ink: #1c1b1a;
+    }
+
+    html {
+      font-size: 18px;
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-editorial);
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    /* ── Reading progress ── */
+    .reading-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: var(--sage-green);
+      width: 0%;
+      z-index: 1000;
+      transition: width 0.1s linear;
+    }
+
+    /* ── Top nav bar ── */
+    .pov-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 99;
+      padding: 16px 0;
+      background: rgba(249, 247, 243, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      transition: background 0.35s ease;
+    }
+
+    /* Over the cover image, make it transparent with white text */
+    .pov-nav.over-cover {
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      border-bottom-color: transparent;
+    }
+
+    .pov-nav.over-cover .pov-nav-brand {
+      color: var(--white);
+    }
+
+    .pov-nav.over-cover .pov-nav-back {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .pov-nav.over-cover .pov-nav-back:hover {
+      color: var(--celadon);
+    }
+
+    .pov-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 clamp(24px, 5vw, 80px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .pov-nav-brand {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.9rem;
+      letter-spacing: -0.03em;
+      color: var(--charcoal-blue);
+      text-decoration: none;
+    }
+
+    .pov-nav-back {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--sage-green);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .pov-nav-back:hover {
+      color: var(--muted-teal);
+    }
+
+    /* ── Hero / Cover ── */
+    .pov-cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      position: relative;
+      overflow: hidden;
+      background: var(--charcoal-blue);
+    }
+
+    .pov-cover-image {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .pov-cover-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.35;
+      filter: grayscale(30%);
+    }
+
+    .pov-cover-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top,
+          rgba(69, 72, 81, 0.95) 0%,
+          rgba(69, 72, 81, 0.7) 30%,
+          rgba(69, 72, 81, 0.3) 60%,
+          rgba(69, 72, 81, 0.1) 100%);
+      z-index: 1;
+    }
+
+    .pov-cover-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      padding: 0 clamp(32px, 6vw, 100px) 100px;
+    }
+
+    .pov-cover-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--celadon);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .pov-cover-eyebrow::before {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: var(--celadon);
+    }
+
+    .pov-cover-title {
+      font-family: var(--font-editorial);
+      font-size: clamp(1.8rem, 3.5vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 32px;
+    }
+
+    .pov-cover-title em {
+      font-style: italic;
+      color: var(--celadon);
+    }
+
+    .pov-cover-meta {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .pov-cover-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pov-cover-divider {
+      width: 1px;
+      height: 14px;
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* ── Article body ── */
+    .pov-article {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px clamp(24px, 5vw, 48px) 120px;
+    }
+
+    /* Drop cap on first paragraph */
+    .pov-article>p:first-of-type::first-letter {
+      font-family: var(--font-editorial);
+      font-size: 4.2rem;
+      font-weight: 700;
+      float: left;
+      line-height: 0.8;
+      margin-right: 12px;
+      margin-top: 8px;
+      color: var(--sage-green);
+    }
+
+    .pov-article p {
+      font-family: var(--font-editorial);
+      font-size: 1.15rem;
+      line-height: 1.85;
+      color: var(--ink);
+      margin-bottom: 28px;
+      font-weight: 400;
+    }
+
+    /* ── Section dividers ── */
+    .pov-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin: 56px 0;
+    }
+
+    .pov-divider-line {
+      width: 40px;
+      height: 1px;
+      background: rgba(115, 149, 111, 0.4);
+    }
+
+    .pov-divider-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--sage-green);
+    }
+
+    /* ── Pull quotes ── */
+    .pov-pull {
+      font-family: var(--font-editorial);
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 600;
+      font-style: italic;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      color: var(--charcoal-blue);
+      margin: 64px 0;
+      padding: 40px 0;
+      border-top: 2px solid var(--sage-green);
+      border-bottom: 1px solid rgba(115, 149, 111, 0.2);
+      text-align: center;
+    }
+
+    /* ── Full-bleed images ── */
+    .pov-image-full {
+      margin: 64px calc(-1 * clamp(24px, 12vw, 200px));
+      position: relative;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+
+    .pov-image-full img {
+      width: 100%;
+      height: 460px;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(15%);
+    }
+
+    .pov-image-caption {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--medium-gray);
+      margin-top: 12px;
+      text-align: right;
+      padding-right: 4px;
+    }
+
+    /* ── Inset images (within text column) ── */
+    .pov-image-inset {
+      margin: 48px 0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .pov-image-inset img {
+      width: 100%;
+      height: 340px;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(10%);
+    }
+
+    /* ── Inline SVG graphics ── */
+    .pov-graphic {
+      margin: 56px 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .pov-graphic svg {
+      max-width: 100%;
+    }
+
+    /* ── Side-by-side contrast blocks ── */
+    .pov-contrast {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin: 56px 0;
+    }
+
+    .pov-contrast-card {
+      padding: 32px;
+      border-radius: 12px;
+    }
+
+    .pov-contrast-card.old {
+      background: rgba(100, 116, 139, 0.08);
+      border: 1px solid rgba(100, 116, 139, 0.15);
+    }
+
+    .pov-contrast-card.new {
+      background: rgba(115, 149, 111, 0.08);
+      border: 1px solid rgba(115, 149, 111, 0.2);
+    }
+
+    .pov-contrast-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .pov-contrast-card.old .pov-contrast-label {
+      color: var(--medium-gray);
+    }
+
+    .pov-contrast-card.new .pov-contrast-label {
+      color: var(--sage-green);
+    }
+
+    .pov-contrast-text {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--charcoal-blue);
+    }
+
+    .pov-contrast-sub {
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      color: var(--medium-gray);
+      margin-top: 8px;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 640px) {
+      .pov-contrast {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── Callout box ── */
+    .pov-callout {
+      background: var(--charcoal-blue);
+      color: var(--white);
+      border-radius: 16px;
+      padding: 48px 44px;
+      margin: 64px 0;
+    }
+
+    .pov-callout-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--celadon);
+      margin-bottom: 16px;
+    }
+
+    .pov-callout h3 {
+      font-family: var(--font-editorial);
+      font-size: 1.5rem;
+      font-weight: 600;
+      font-style: italic;
+      line-height: 1.3;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+
+    .pov-callout p {
+      font-family: var(--font-body) !important;
+      font-size: 1rem !important;
+      color: rgba(255, 255, 255, 0.75) !important;
+      line-height: 1.7 !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* ── Closing section ── */
+    .pov-closing {
+      background: var(--charcoal-blue);
+      padding: 120px 0;
+      text-align: center;
+    }
+
+    .pov-closing-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 clamp(24px, 5vw, 60px);
+    }
+
+    .pov-closing-quote {
+      font-family: var(--font-editorial);
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 600;
+      font-style: italic;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      color: var(--white);
+      margin-bottom: 48px;
+    }
+
+    .pov-closing-quote em {
+      color: var(--celadon);
+      font-style: italic;
+    }
+
+    .pov-closing-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 18px 40px;
+      background: var(--celadon);
+      color: var(--charcoal-blue);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .pov-closing-cta:hover {
+      background: var(--muted-teal);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(149, 215, 174, 0.3);
+    }
+
+    .pov-closing-back {
+      display: block;
+      margin-top: 24px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      color: rgba(255, 255, 255, 0.5);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .pov-closing-back:hover {
+      color: var(--celadon);
+    }
+
+    .pov-footer {
+      padding: 32px 0;
+      background: var(--charcoal-blue);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: rgba(255, 255, 255, 0.4);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Scroll reveals ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      html {
+        font-size: 16px;
+      }
+
+      .pov-cover-content {
+        padding-bottom: 60px;
+      }
+
+      .pov-image-full {
+        margin-left: -24px;
+        margin-right: -24px;
+      }
+
+      .pov-image-full img {
+        height: 280px;
+      }
+
+      .pov-callout {
+        padding: 36px 28px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fade-in {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Reading progress -->
+  <div class="reading-progress"></div>
+
+  <!-- Sticky nav -->
+  <nav class="pov-nav over-cover">
+    <div class="pov-nav-inner">
+      <a href="index.html" class="pov-nav-brand">Agency</a>
+      <a href="index.html" class="pov-nav-back">&larr; Back to Home</a>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════
+       COVER
+       ═══════════════════════════════════════════════ -->
+  <header class="pov-cover">
+    <div class="pov-cover-image">
+      <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80" alt="Abstract light trails">
+    </div>
+    <div class="pov-cover-gradient"></div>
+    <div class="pov-cover-content">
+      <div class="pov-cover-eyebrow">A Point of View</div>
+      <h1 class="pov-cover-title">Don&rsquo;t automate the past.<br><em>Question it.</em></h1>
+      <div class="pov-cover-meta">
+        <span>Agency</span>
+        <div class="pov-cover-divider"></div>
+        <span>8 min read</span>
+        <div class="pov-cover-divider"></div>
+        <span>April 2026</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════
+       ARTICLE BODY
+       ═══════════════════════════════════════════════ -->
+  <article class="pov-article">
+
+    <p class="fade-in">Every technology arrives with an efficiency narrative: do what you currently do, only faster. But
+      the organizations that focus squarely on efficiency always miss out on the bigger opportunity. It&rsquo;s no
+      different with AI.</p>
+
+    <p class="fade-in">AI is not an incremental technology, yet most organizations are treating it so. They are using AI
+      to accelerate the same work toward the same outcomes. The opportunity they are missing is proportional to how
+      transformative the technology actually is&mdash;to become a fundamentally more capable, adaptable business.</p>
+
+    <!-- Full-bleed image -->
+    <div class="pov-image-full fade-in">
+      <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&q=80"
+        alt="Modern architecture reaching upward">
+    </div>
+
+    <!-- Section break -->
+    <div class="pov-divider">
+      <div class="pov-divider-line"></div>
+      <div class="pov-divider-dot"></div>
+      <div class="pov-divider-line"></div>
+    </div>
+
+    <div class="pov-pull fade-in">The real challenge of AI transformation is not technological. <span
+        style="color: var(--sage-green);">It&rsquo;s organizational.</span></div>
+
+    <p class="fade-in">The current paradigm for organizations is one that is based on answers. Scaled organizations are
+      built to produce reliable answers that work to optimize the core business. Their structures, decisions, and
+      incentives all promote answers developed by analytical thinking. But this same rigidity that allows them to
+      operate at scale prevents them from adapting to changes threatening their business. Every attempt to fix
+      this&mdash;innovation labs, transformation offices&mdash;has struggled to take hold. The paradigm doesn&rsquo;t
+      just resist change&mdash;it&rsquo;s designed to defeat it.</p>
+
+    <!-- Inline graphic: Answers vs Questions paradigm -->
+    <div class="pov-graphic fade-in">
+      <svg width="540" height="200" viewBox="0 0 540 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Left: Answer org -->
+        <rect x="10" y="20" width="220" height="160" rx="12" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
+        <text x="120" y="50" text-anchor="middle" font-family="Space Grotesk" font-weight="800" font-size="13"
+          fill="#454851">THE ANSWER ORGANIZATION</text>
+        <line x1="50" y1="65" x2="190" y2="65" stroke="#e2e8f0" stroke-width="1" />
+        <text x="120" y="85" text-anchor="middle" font-family="DM Sans" font-size="10" fill="#64748b">Optimizes the
+          known</text>
+        <text x="120" y="102" text-anchor="middle" font-family="DM Sans" font-size="10" fill="#64748b">Scales through
+          control</text>
+        <text x="120" y="119" text-anchor="middle" font-family="DM Sans" font-size="10" fill="#64748b">Rewards
+          predictability</text>
+        <text x="120" y="136" text-anchor="middle" font-family="DM Sans" font-size="10" fill="#64748b">Resists
+          disruption</text>
+        <text x="120" y="165" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="9"
+          fill="#94a3b8" letter-spacing="0.1em">EFFICIENCY</text>
+
+        <!-- Arrow -->
+        <path d="M245 100 L295 100" stroke="#73956F" stroke-width="2" stroke-dasharray="4,4" />
+        <polygon points="295,94 307,100 295,106" fill="#73956F" />
+
+        <!-- Right: Question org -->
+        <rect x="320" y="20" width="220" height="160" rx="12" fill="rgba(115,149,111,0.08)" stroke="#73956F"
+          stroke-width="1.5" />
+        <text x="430" y="50" text-anchor="middle" font-family="Space Grotesk" font-weight="800" font-size="13"
+          fill="#73956F">THE QUESTION ORGANIZATION</text>
+        <line x1="360" y1="65" x2="500" y2="65" stroke="rgba(115,149,111,0.2)" stroke-width="1" />
+        <text x="430" y="85" text-anchor="middle" font-family="DM Sans" font-size="10" fill="#454851">Explores the
+          unknown</text>
+        <text x="430" y="102" text-anchor="middle" font-family="DM Sans" font-size="10" fill="#454851">Scales through
+          agency</text>
+        <text x="430" y="119" text-anchor="middle" font-family="DM Sans" font-size="10" fill="#454851">Rewards
+          curiosity</text>
+        <text x="430" y="136" text-anchor="middle" font-family="DM Sans" font-size="10" fill="#454851">Embraces
+          adaptation</text>
+        <text x="430" y="165" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="9"
+          fill="#73956F" letter-spacing="0.1em">ADAPTABILITY</text>
+      </svg>
+    </div>
+
+    <p class="fade-in">AI produces what today&rsquo;s organizations run on: answers. It can do the same analytical
+      thinking organizations have asked of their people&mdash;only better. Those organizations that are stuck in the
+      efficiency trap are asking their people to go through grueling change. Employees are being asked to implement
+      technology that automates the expertise they spent careers building. Leaders are being asked to dismantle the very
+      systems that made them successful. Everyone is being asked to let go of what worked before the replacement is
+      fully clear. This is not a change management problem; it is an identity crisis at organizational scale.</p>
+
+    <!-- Inset image -->
+    <div class="pov-image-inset fade-in">
+      <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=80"
+        alt="People collaborating around a table">
+    </div>
+
+    <p class="fade-in">But as AI commoditizes what is core to the old paradigm, it also forces businesses to define what
+      will differentiate the business in the future. For organizations willing to see past the efficiency trap, the
+      opportunity is significant.</p>
+
+    <!-- Section break -->
+    <div class="pov-divider">
+      <div class="pov-divider-line"></div>
+      <div class="pov-divider-dot"></div>
+      <div class="pov-divider-line"></div>
+    </div>
+
+    <div class="pov-pull fade-in">The opportunity: unleash your people to explore questions about the future, while AI
+      runs the business in the present.</div>
+
+    <p class="fade-in">The new paradigm for organizations is one that is based on questions. In these organizations,
+      people have genuine agency&mdash;to think, challenge, and create, not just execute. The people closest to the
+      customer, products, and operations are the ones best positioned to question. Their questioning navigates the
+      organization to the new, while AI handles the old. They use AI not to produce the same answers faster, but to
+      develop new understanding and pursue new strategic directions.</p>
+
+    <!-- Contrast cards -->
+    <div class="pov-contrast fade-in">
+      <div class="pov-contrast-card old">
+        <div class="pov-contrast-label">The Efficiency Trap</div>
+        <div class="pov-contrast-text">AI produces answers faster.</div>
+        <div class="pov-contrast-sub">Same work, same outcomes, same assumptions. The organization gets faster but stays
+          bounded by the past.</div>
+      </div>
+      <div class="pov-contrast-card new">
+        <div class="pov-contrast-label">The Opportunity</div>
+        <div class="pov-contrast-text">People pursue questions further.</div>
+        <div class="pov-contrast-sub">New directions, new capabilities, new understanding. The organization becomes
+          genuinely more adaptive.</div>
+      </div>
+    </div>
+
+    <p class="fade-in">This is what human agency looks like in an AI-native organization. And it is what will
+      differentiate businesses in the future.</p>
+
+    <!-- Full-bleed image -->
+    <div class="pov-image-full fade-in">
+      <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1600&q=80"
+        alt="Team working with technology">
+    </div>
+
+    <!-- Section break -->
+    <div class="pov-divider">
+      <div class="pov-divider-line"></div>
+      <div class="pov-divider-dot"></div>
+      <div class="pov-divider-line"></div>
+    </div>
+
+    <p class="fade-in">Shifting to a question organization is not about launching an AI literacy program or sparking a
+      culture initiative. The transformation requires changes to how decisions get made, how teams collaborate, and how
+      intelligence moves through the business. It is a change in what drives the entire organization&mdash;a true
+      transformation.</p>
+
+    <!-- Callout box -->
+    <div class="pov-callout fade-in">
+      <div class="pov-callout-eyebrow">The Stakes</div>
+      <h3>Those that pursue it will achieve what has long eluded the business world&mdash;an adaptive organization. One
+        that AI makes non-negotiable.</h3>
+      <p>Organizations that chase efficiencies in the old paradigm will get faster. But they will stay bounded by the
+        assumptions of the past. And as their people default to using AI for the same answers they&rsquo;ve always been
+        asked for, the human capabilities needed most at this time will continue to erode.</p>
+    </div>
+
+    <p class="fade-in">Organizations that make the shift will build something genuinely new: a business where people are
+      more capable because of AI, not in spite of it. Where the people closest to the problems have the agency to solve
+      them. Where this agency fuels a consistent adaptation of the business in line with the world around it.</p>
+
+    <!-- Section break -->
+    <div class="pov-divider">
+      <div class="pov-divider-line"></div>
+      <div class="pov-divider-dot"></div>
+      <div class="pov-divider-line"></div>
+    </div>
+
+    <!-- Inline graphic: What we build -->
+    <div class="pov-graphic fade-in">
+      <svg width="480" height="260" viewBox="0 0 480 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Center circle -->
+        <circle cx="240" cy="130" r="60" fill="rgba(115,149,111,0.1)" stroke="#73956F" stroke-width="1.5" />
+        <text x="240" y="122" text-anchor="middle" font-family="Space Grotesk" font-weight="800" font-size="11"
+          fill="#73956F">HUMAN</text>
+        <text x="240" y="138" text-anchor="middle" font-family="Space Grotesk" font-weight="800" font-size="11"
+          fill="#73956F">AGENCY</text>
+
+        <!-- Orbiting elements -->
+        <!-- Top: Strategy -->
+        <line x1="240" y1="70" x2="240" y2="30" stroke="#73956F" stroke-width="1" stroke-dasharray="3,3" />
+        <circle cx="240" cy="22" r="4" fill="#73956F" />
+        <text x="240" y="12" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="8"
+          fill="#454851" letter-spacing="0.08em">STRATEGY</text>
+
+        <!-- Right: Capability -->
+        <line x1="300" y1="130" x2="360" y2="130" stroke="#73956F" stroke-width="1" stroke-dasharray="3,3" />
+        <circle cx="368" cy="130" r="4" fill="#73956F" />
+        <text x="410" y="133" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="8"
+          fill="#454851" letter-spacing="0.08em">CAPABILITY</text>
+
+        <!-- Bottom: Belief -->
+        <line x1="240" y1="190" x2="240" y2="230" stroke="#73956F" stroke-width="1" stroke-dasharray="3,3" />
+        <circle cx="240" cy="238" r="4" fill="#73956F" />
+        <text x="240" y="254" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="8"
+          fill="#454851" letter-spacing="0.08em">BELIEF</text>
+
+        <!-- Left: Questions -->
+        <line x1="180" y1="130" x2="120" y2="130" stroke="#73956F" stroke-width="1" stroke-dasharray="3,3" />
+        <circle cx="112" cy="130" r="4" fill="#73956F" />
+        <text x="72" y="133" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="8"
+          fill="#454851" letter-spacing="0.08em">QUESTIONS</text>
+
+        <!-- Outer arc -->
+        <path d="M 120 50 Q 30 130 120 210" stroke="rgba(115,149,111,0.15)" stroke-width="1" fill="none" />
+        <path d="M 360 50 Q 450 130 360 210" stroke="rgba(115,149,111,0.15)" stroke-width="1" fill="none" />
+      </svg>
+    </div>
+
+    <p class="fade-in">This is what we build. Not predefined answers for organizations to impose on their
+      people&mdash;even if we had them, that&rsquo;s not how real change happens. A question organization must be
+      discovered through the actual work of the business. Developing transformational strategy and building the
+      team&rsquo;s capacity to own it aren&rsquo;t two jobs. They&rsquo;re the same act.</p>
+
+    <!-- Inset image -->
+    <div class="pov-image-inset fade-in">
+      <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80"
+        alt="Workshop session with ideas on a board">
+    </div>
+
+    <p class="fade-in">Our experience is that this is when people come alive. When your people experience themselves
+      becoming more capable, not less relevant, AI shifts from an existential threat to an embraced opportunity.
+      Confidence is not built through empty reassurance; it is built through the act of working differently and
+      discovering the new value they offer their organization.</p>
+
+  </article>
+
+  <!-- ═══════════════════════════════════════════════
+       CLOSING
+       ═══════════════════════════════════════════════ -->
+  <section class="pov-closing">
+    <div class="pov-closing-inner">
+      <p class="pov-closing-quote fade-in">The organizations that win won&rsquo;t be the ones that deploy AI the
+        fastest. They&rsquo;ll be the ones that break what constrains <em>human agency</em>&mdash;and build what expands
+        it.</p>
+      <a href="index.html#contact" class="pov-closing-cta">Start a Conversation &rarr;</a>
+      <a href="index.html" class="pov-closing-back">&larr; Back to Agency</a>
+    </div>
+  </section>
+
+  <footer class="pov-footer">
+    &copy; 2026 Agency
+  </footer>
+
+  <script>
+    // Reading progress bar
+    window.addEventListener('scroll', () => {
+      const pct = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      document.querySelector('.reading-progress').style.width = pct + '%';
+    });
+
+    // Toggle nav style when scrolling past cover
+    const povNav = document.querySelector('.pov-nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > window.innerHeight * 0.5) {
+        povNav.classList.remove('over-cover');
+      } else {
+        povNav.classList.add('over-cover');
+      }
+    });
+
+    // Fade-in on scroll
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+  </script>
+
+</body>
+
+</html>
